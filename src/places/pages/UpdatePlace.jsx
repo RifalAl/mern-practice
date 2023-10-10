@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Card, CardBody, CardFooter, Button } from "@material-tailwind/react";
 
 import InputField from "../../shared/components/UI/Input";
-import { useParams } from "react-router-dom";
+import loading from "../../assets/loading.svg";
 
 const DUMMY_PLACES = [
   {
@@ -34,13 +34,20 @@ const DUMMY_PLACES = [
 
 const UpdatePlace = () => {
   const placeId = useParams().placeId;
-  const identifiendPlace = DUMMY_PLACES.find((p) => p.id === placeId);
+  const [isloading, setIsLoading] = useState(true);
+  const [identifiendPlace, setIdentifiedPlace] = useState({});
+  const loadIdentifiendPlace = () => {
+    setIdentifiedPlace(DUMMY_PLACES.find((p) => p.id === placeId));
+    setIsLoading(false);
+  };
+  setTimeout(loadIdentifiendPlace, 5000);
   const navigate = useHistory();
   const [data, setData] = useState({});
   useEffect(() => {
     console.log(data);
   }, [data]);
   const formik = useFormik({
+    enableReinitialize: true,
     initialValues: {
       title: identifiendPlace?.title || "",
       description: identifiendPlace?.description || "",
@@ -66,47 +73,74 @@ const UpdatePlace = () => {
     },
   });
 
+  const formItems = [
+    {
+      name: "title",
+      label: "Title",
+      type: "title",
+      touched: formik.touched.title,
+      error: formik.errors.title,
+      value: formik.values.title,
+      isTextArea: false,
+    },
+    {
+      name: "description",
+      label: "Description",
+      type: "description",
+      touched: formik.touched.description,
+      error: formik.errors.description,
+      value: formik.values.description,
+      isTextArea: true,
+    },
+    {
+      name: "address",
+      label: "Address",
+      type: "address",
+      touched: formik.touched.address,
+      error: formik.errors.address,
+      value: formik.values.address,
+      isTextArea: false,
+    },
+  ];
+
   let content;
 
-  if (!identifiendPlace) {
+  if (isloading) {
+    content = (
+      <Card className="w-[90%] md:w-[50%]">
+        <CardBody className="flex justify-center">
+          <img className="w-[150px]" src={loading} alt="loading" />
+        </CardBody>
+      </Card>
+    );
+  }
+
+  if (!isloading && !identifiendPlace) {
     content = (
       <Card className="w-[90%] md:w-[50%]">
         <CardBody className="text-center">Could not find place</CardBody>
       </Card>
     );
-  } else {
+  }
+
+  if (!isloading && identifiendPlace) {
     content = (
       <Card className="w-[90%] md:w-[50%]">
         <form onSubmit={formik.handleSubmit}>
           <CardBody className="flex flex-col gap-5 py-10">
-            <InputField
-              formik={formik}
-              id="title"
-              name="title"
-              label="Title"
-              touched={formik.touched.title}
-              error={formik.errors.title}
-              value={formik.values.title}
-            />
-            <InputField
-              formik={formik}
-              id="description"
-              name="description"
-              label="Description"
-              touched={formik.touched.description}
-              error={formik.errors.description}
-              value={formik.values.description}
-              isTextArea={true}
-            />
-            <InputField
-              formik={formik}
-              id="address"
-              name="address"
-              label="Address"
-              touched={formik.touched.address}
-              error={formik.errors.address}
-              value={formik.values.address}
-            />
+            {formItems.map((input) => (
+              <InputField
+                key={input.name}
+                formik={formik}
+                id={input.name}
+                name={input.name}
+                label={input.label}
+                touched={input.touched}
+                error={input.error}
+                value={input.value}
+                isTextArea={input.isTextArea}
+              />
+            ))}
           </CardBody>
           <CardFooter className="text-right">
             <Button

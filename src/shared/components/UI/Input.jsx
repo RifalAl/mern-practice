@@ -11,6 +11,7 @@ const InputField = ({
   touched,
   error,
   isTextArea,
+  type
 }) => {
   return (
     <div>
@@ -26,7 +27,7 @@ const InputField = ({
             onBlur={formik.handleBlur}
             value={value || ""}
             error={touched && error ? true : false}
-            rows={2}
+            rows={6}
             labelProps={{className: "!text-[14px]"}}
           />
           {touched && error ? (
@@ -40,6 +41,7 @@ const InputField = ({
             name={name}
             variant={variant}
             label={label}
+            type={type}
             placeholder={variant === "static" ? placeholder : ""}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}

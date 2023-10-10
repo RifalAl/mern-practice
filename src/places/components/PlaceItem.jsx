@@ -1,8 +1,8 @@
 import { useState } from "react";
-import {  } from "react-router-dom";
 import { Card, CardBody, Button } from "@material-tailwind/react";
 import PlaceModal from "./PlaceModal";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
+import AlertDialog from "../../shared/components/UI/AlertDialog";
 
 const PlaceItem = ({
   id,
@@ -14,13 +14,20 @@ const PlaceItem = ({
   coordinates,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const navigate = useHistory()
+  const [openAlert, setOpenAlert] = useState(false);
+  const navigate = useHistory();
 
   const toogleModal = () => setOpenModal((prevItem) => !prevItem);
-  
+  const toogleAlert = () => setOpenAlert((prevItem) => !prevItem);
+
   const editPageHandler = () => {
-    navigate.push(`/places/${id}`)
-  }
+    navigate.push(`/places/${id}`);
+  };
+
+  const deletePlaceHandler = () => {
+    window.location.reload();
+  };
+
   return (
     <>
       <PlaceModal
@@ -29,7 +36,12 @@ const PlaceItem = ({
         openModal={openModal}
         coordinates={coordinates}
       />
-      
+      <AlertDialog
+        toogleAlert={toogleAlert}
+        openAlert={openAlert}
+        onDelete={deletePlaceHandler}
+      />
+
       <li className="place-item mx-0 my-8">
         <Card id={id}>
           <CardBody className="place-item__content p-0">
@@ -94,6 +106,7 @@ const PlaceItem = ({
                   Edit
                 </Button>
                 <Button
+                  onClick={toogleAlert}
                   variant="text"
                   color="red"
                   size="sm"

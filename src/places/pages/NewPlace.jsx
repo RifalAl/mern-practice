@@ -20,7 +20,7 @@ const NewPlace = () => {
     },
     validationSchema: Yup.object({
       title: Yup.string()
-        .min(5, "Must be at least 5 character")
+        .min(6, "Must be at least 6 character")
         .required("Please enter valid title"),
       description: Yup.string()
         .min(10, "Must be at least 10 character")

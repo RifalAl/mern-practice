@@ -51,23 +51,20 @@ const UpdatePlace = () => {
     initialValues: {
       title: identifiendPlace?.title || "",
       description: identifiendPlace?.description || "",
-      address: identifiendPlace?.address || "",
     },
     validationSchema: Yup.object({
       title: Yup.string()
-        .min(5, "Must be at least 5 character")
+        .min(6, "Must be at least 6 character")
         .required("Please enter valid title"),
       description: Yup.string()
         .min(10, "Must be at least 10 character")
         .required("Please enter valid address"),
-      address: Yup.string().required("Please enter valid address"),
     }),
     onSubmit: (values) => {
       console.log(JSON.stringify(values, null, 2));
       setData({
         title: formik.values.title,
         description: formik.values.description,
-        address: formik.values.address,
       });
       navigate.push("/");
     },

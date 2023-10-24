@@ -12,40 +12,65 @@ import * as Yup from "yup";
 import InputField from "../../shared/components/UI/Input";
 
 const Login = () => {
-  const formik = useFormik({
+  const formikSignUp = useFormik({
     initialValues: {
+      name: "",
       email: "",
       password: "",
     },
     validationSchema: Yup.object({
+      name: Yup.string().required("name is required"),
       email: Yup.string()
         .required("email is required")
         .email("Not a proper email"),
       password: Yup.string().required("password is required"),
     }),
-    onSubmit: (values) => {
-      console.log(JSON.stringify(values, null, 2));
+    onSubmit: async () => {
+      // console.log("name : " +formikSignUp.values.name)
+      // console.log("email : " +formikSignUp.values.email)
+      // console.log("password : " +formikSignUp.values.password)
+      fetch("http://localhost:5000/api/users/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name: formikSignUp.values.name,
+          email: formikSignUp.values.email,
+          password: formikSignUp.values.password
+        })
+      })
     },
   });
 
   const formItems = [
     {
+      name: "name",
+      label: "Name",
+      type: "text",
+      touched: formikSignUp.touched.name,
+      error: formikSignUp.errors.name,
+      value: formikSignUp.values.name,
+    },
+    {
       name: "email",
       label: "Email",
       type: "email",
-      touched: formik.touched.email,
-      error: formik.errors.email,
-      value: formik.values.email,
+      touched: formikSignUp.touched.email,
+      error: formikSignUp.errors.email,
+      value: formikSignUp.values.email,
     },
     {
       name: "password",
       label: "Password",
       type: "password",
-      touched: formik.touched.password,
-      error: formik.errors.password,
-      value: formik.values.password,
+      touched: formikSignUp.touched.password,
+      error: formikSignUp.errors.password,
+      value: formikSignUp.values.password,
     },
   ];
+
+
   return (
     <div className="flex justify-center items-center h-screen mt-[-65px]">
       <Card className="w-96">
@@ -73,15 +98,15 @@ const Login = () => {
                 d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
               />
             </svg>
-            Login
+            Sign up
           </Typography>
         </CardHeader>
-        <form onSubmit={formik.handleSubmit}>
+        <form onSubmit={formikSignUp.handleSubmit}>
           <CardBody className="flex flex-col gap-4">
             {formItems.map((input) => (
               <InputField
                 key={input.name}
-                formik={formik}
+                formik={formikSignUp}
                 id={input.name}
                 name={input.name}
                 label={input.label}
@@ -96,10 +121,10 @@ const Login = () => {
 
           <CardFooter className="pt-0">
             <Button type="submit" variant="gradient" fullWidth>
-              Login
+              Sign Up
             </Button>
             <Typography variant="small" className="mt-6 flex justify-center">
-              Don&apos;t have an account?
+              Already have account?
               <Typography
                 as="a"
                 href="#signup"
@@ -107,7 +132,7 @@ const Login = () => {
                 color="blue-gray"
                 className="ml-1 font-bold"
               >
-                Sign up
+                Login
               </Typography>
             </Typography>
           </CardFooter>

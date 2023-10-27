@@ -88,16 +88,7 @@ const UpdatePlace = () => {
       error: formik.errors.description,
       value: formik.values.description,
       isTextArea: true,
-    },
-    {
-      name: "address",
-      label: "Address",
-      type: "address",
-      touched: formik.touched.address,
-      error: formik.errors.address,
-      value: formik.values.address,
-      isTextArea: false,
-    },
+    }
   ];
 
   let content;

@@ -17,7 +17,7 @@ const UserItem = (props) => {
                 {name}
               </h2>
               <h3 className="font-semibold text-lg mt-1 group-hover:text-[#292929]">
-                {placeCount} {placeCount === 1 ? "Place" : "Places"}
+                {placeCount} {placeCount > 1 ? "Places" : "Place"}
               </h3>
             </div>
           </CardBody>

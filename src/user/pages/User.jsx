@@ -1,22 +1,50 @@
+import { useEffect, useState } from "react";
+
 import UsersList from "../components/UsersList";
+import loading from "../../assets/loading.svg";
+import WarningModal from "../../shared/components/UI/WarningModal";
+import useHttpClient from "../../shared/hooks/http-hooks";
 
 const User = () => {
-  const USERS = [
-    {
-      id: "u1",
-      name: "Ahmad Rifaldi",
-      img: "https://images.unsplash.com/photo-1549877452-9c387954fbc2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80",
-      places: 1,
-    },
-    {
-      id: "u2",
-      name: "Ranamirah",
-      img: "https://picsum.photos/200",
-      places: 1,
-    },
-  
-  ];
-  return <UsersList items={USERS} />;
+  const [openModal, setOpenModal] = useState(false);
+  const [data, setData] = useState([]);
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  useEffect(() => {
+    const getUsers = async () => {
+      try {
+        const response = await sendRequest("http://localhost:5000/api/users");
+        setData(response.users);
+      } catch (err) {
+        setOpenModal(true);
+        console.log(err); 
+      }
+    };
+    getUsers();
+  }, [sendRequest]);
+
+  const toogleModal = () => {
+    setOpenModal((prevItem) => !prevItem);
+  };
+
+  return (
+    <>
+      {isLoading ? (
+        <div className="flex justify-center">
+          <img className="w-[150px]" src={loading} alt="loading" />
+        </div>
+      ) : (
+        <>
+          <WarningModal
+            toogleModal={toogleModal}
+            openModal={openModal}
+            message={error}
+            onClear={clearError}
+          />
+          <UsersList items={data} />
+        </>
+      )}
+    </>
+  );
 };
 
 export default User;

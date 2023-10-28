@@ -49,6 +49,7 @@ const InputField = ({
             value={value || ""}
             error={touched && error ? true : false}
             labelProps={{className: "!text-[14px]"}}
+            accept={type === "file" ? ".jpg,.ng,.jpeg" : null}
           />
           {touched && error ? (
             <div className="text-xs text-red-600 mt-1">{error}</div>

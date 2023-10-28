@@ -46,18 +46,15 @@ const Login = () => {
     }),
     onSubmit: async () => {
       try {
+        const formData = new FormData()
+        formData.append("name", formikSignUp.values.name)
+        formData.append("email", formikSignUp.values.email)
+        formData.append("password", formikSignUp.values.password)
+        formData.append("image", photoFile)
         const responseData = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
-          JSON.stringify({
-            photo: photoFile,
-            name: formikSignUp.values.name,
-            email: formikSignUp.values.email,
-            password: formikSignUp.values.password,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
+          formData
         );
         auth.login(responseData.user.id);
         navigate.push("/");
@@ -66,6 +63,7 @@ const Login = () => {
         console.log(err);
         setOpenModal(true);
       }
+      formikSignUp.values.photo = ""
     },
   });
   const formikLogin = useFormik({
@@ -98,6 +96,7 @@ const Login = () => {
         console.log(err);
         setOpenModal(true);
       }
+      formikLogin.resetForm();
     },
   });
   const changePhotohandler = (e) => {
@@ -167,8 +166,7 @@ const Login = () => {
 
   const isSignUpHandler = () => {
     setIsSignUp((prevItem) => !prevItem);
-    formikLogin.resetForm();
-    formikSignUp.resetForm();
+    formikSignUp.values.photo = ""
   };
 
   const toogleModal = () => {

@@ -42,19 +42,16 @@ const NewPlace = () => {
     }),
     onSubmit: async () => {
       try {
+        const formData = new FormData()
+        formData.append("title", formik.values.title)
+        formData.append("description", formik.values.description)
+        formData.append("address", formik.values.address)
+        formData.append("creator", auth.userId)
+        formData.append("image", photoFile)
         await sendRequest(
           "http://localhost:5000/api/places",
           "POST",
-          JSON.stringify({
-            photo: photoFile,
-            title: formik.values.title,
-            description: formik.values.description,
-            address: formik.values.address,
-            creator: auth.userId,
-          }),
-          {
-            "Content-Type": "application/json",
-          }
+          formData
         );
         navigate.push("/");
       } catch (error) {

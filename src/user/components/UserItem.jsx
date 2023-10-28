@@ -10,7 +10,7 @@ const UserItem = (props) => {
         <Link to={`/${id}/places`}>
           <CardBody className="flex group gap-2 items-center w-full h-full hover:bg-[#ffd900] text-white bg-[#292929] rounded-md">
             <div className="w-[4rem] h-[4rem]">
-              <Avatar src={image} alt={name} size="lg" />
+              <Avatar src={`http://localhost:5000/${image}`} alt={name} size="lg" />
             </div>
             <div className="mr-4">
               <h2 className="text-2xl font-medium text-[#ffd900] group-hover:text-[#292929] cursor-pointer">

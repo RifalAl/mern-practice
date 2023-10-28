@@ -2,7 +2,7 @@ import { Card, Button } from "@material-tailwind/react";
 import { useHistory } from "react-router-dom/cjs/react-router-dom.min";
 
 import PlaceItem from "./PlaceItem";
-const PlaceList = ({ items, userId }) => {
+const PlaceList = ({ items, userId, onDelete }) => {
   const navigate = useHistory();
   const sharePlaceHandler = () => {
     navigate.push("/places/new");
@@ -33,6 +33,7 @@ const PlaceList = ({ items, userId }) => {
             description={place.description}
             creatorId={userId}
             coordinates={place.location}
+            onDelete={onDelete}
           />
         ))}
       </ul>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -6,46 +6,33 @@ import { Card, CardBody, CardFooter, Button } from "@material-tailwind/react";
 
 import InputField from "../../shared/components/UI/Input";
 import loading from "../../assets/loading.svg";
-
-const DUMMY_PLACES = [
-  {
-    id: "p1",
-    title: "Masjid Jami Tua Palopo",
-    description:
-      "Masjid Jami Tua Palopo merupakan masjid peninggalan Kerajaan Luwu yang berlokasi di Kota Palopo, Sulawesi Selatan. Masjid ini didirikan oleh Raja Luwu yang bernama Datu Payung Luwu XVI Pati Pasaung Toampanangi Sultan Abdullah Matinroe pada tahun 1604 M",
-    address: "Jl. Andi Djemma No.88, Batupasi, Kec. Wara Utara, Kota Palopo",
-    image:
-      "https://www.djkn.kemenkeu.go.id/files/images/2021/06/Masjid-Jami-Tua-Palopo1.jpeg",
-    location: { lat: -2.9941691069265093, long: 120.19532275826946 },
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    title: "Istana Luwu Palopo",
-    description:
-      "Kedatuan Luwu adalah salah satu kerajaan Bugis tertua. Pada 1889, Gubernur Hindia Belanda di Makassar menyatakan bahwa masa kejayaan Luwu antara abad ke-10 sampai 14",
-    address: "Jl. Landau No.18, Batupasi, Kec. Wara Utara, Kota Palopo",
-    image:
-      "https://www.celebes.co/wp-content/uploads/2020/04/Istana-Langkanae-Luwu.jpg",
-    location: { lat: -2.9944561590805225, long: 120.1964905521137 },
-    creator: "u2",
-  },
-];
+import useHttpClient from "../../shared/hooks/http-hooks";
+import WarningModal from "../../shared/components/UI/WarningModal";
+import { AuthContext } from "../../shared/context/auth-context";
 
 const UpdatePlace = () => {
-  const placeId = useParams().placeId;
-  const [isloading, setIsLoading] = useState(true);
-  const [identifiendPlace, setIdentifiedPlace] = useState({});
-  const loadIdentifiendPlace = () => {
-    setIdentifiedPlace(DUMMY_PLACES.find((p) => p.id === placeId));
-    setIsLoading(false);
-  };
-  setTimeout(loadIdentifiendPlace, 5000);
+  const auth = useContext(AuthContext)
   const navigate = useHistory();
-  const [data, setData] = useState({});
+  const { isLoading, error, sendRequest, clearError } = useHttpClient();
+  const placeId = useParams().placeId;
+  const [identifiendPlace, setIdentifiedPlace] = useState({});
+  const [openModal, setOpenModal] = useState(false);
+
   useEffect(() => {
-    console.log(data);
-  }, [data]);
+    const getPlace = async () => {
+      try {
+        const responseData = await sendRequest(
+          `http://localhost:5000/api/places/${placeId}`
+        );
+        setIdentifiedPlace(responseData.place);
+      } catch (error) {
+        console.log(error);
+        setOpenModal(true);
+      }
+    };
+    getPlace();
+  }, [placeId, sendRequest]);
+
   const formik = useFormik({
     enableReinitialize: true,
     initialValues: {
@@ -60,13 +47,24 @@ const UpdatePlace = () => {
         .min(10, "Must be at least 10 character")
         .required("Please enter valid address"),
     }),
-    onSubmit: (values) => {
-      console.log(JSON.stringify(values, null, 2));
-      setData({
-        title: formik.values.title,
-        description: formik.values.description,
-      });
-      navigate.push("/");
+    onSubmit: async () =>  {
+      try {
+        await sendRequest(
+          `http://localhost:5000/api/places/${placeId}`,
+          "PATCH",
+          JSON.stringify({
+            title: formik.values.title,
+            description: formik.values.description,
+          }),
+          {
+            "Content-Type": "application/json",
+          }
+        );
+        navigate.push(`/${auth.userId}/places`);
+      } catch (error) {
+        console.log(error);
+        setOpenModal(true);
+      }
     },
   });
 
@@ -88,12 +86,16 @@ const UpdatePlace = () => {
       error: formik.errors.description,
       value: formik.values.description,
       isTextArea: true,
-    }
+    },
   ];
+
+  const toogleModal = () => {
+    setOpenModal((prevItem) => !prevItem);
+  };
 
   let content;
 
-  if (isloading) {
+  if (isLoading) {
     content = (
       <Card className="w-[90%] md:w-[50%]">
         <CardBody className="flex justify-center">
@@ -103,7 +105,7 @@ const UpdatePlace = () => {
     );
   }
 
-  if (!isloading && !identifiendPlace) {
+  if (!isLoading && !identifiendPlace) {
     content = (
       <Card className="w-[90%] md:w-[50%]">
         <CardBody className="text-center">Could not find place</CardBody>
@@ -111,7 +113,7 @@ const UpdatePlace = () => {
     );
   }
 
-  if (!isloading && identifiendPlace) {
+  if (!isLoading && identifiendPlace) {
     content = (
       <Card className="w-[90%] md:w-[50%]">
         <form onSubmit={formik.handleSubmit}>
@@ -148,7 +150,17 @@ const UpdatePlace = () => {
       </Card>
     );
   }
-  return <div className="flex justify-center">{content}</div>;
+  return (
+    <>
+      <WarningModal
+        toogleModal={toogleModal}
+        openModal={openModal}
+        message={error}
+        onClear={clearError}
+      />
+      <div className="flex justify-center">{content}</div>;
+    </>
+  );
 };
 
 export default UpdatePlace;

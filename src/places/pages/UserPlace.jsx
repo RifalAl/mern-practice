@@ -7,16 +7,16 @@ import WarningModal from "../../shared/components/UI/WarningModal";
 import loading from "../../assets/loading.svg";
 
 const UserPlace = () => {
+  const userId = useParams().userId;
   const [data, setData] = useState([]);
   const [openModal, setOpenModal] = useState(false);
-  const userId = useParams().userId;
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
 
   useEffect(() => {
     const getPlaces = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/a pi/places/user/${userId}`
+          `http://localhost:5000/api/places/user/${userId}`
         );
         setData(responseData.userPlaces);
       } catch (error) {
@@ -29,6 +29,12 @@ const UserPlace = () => {
 
   const toogleModal = () => {
     setOpenModal((prevItem) => !prevItem);
+  };
+
+  const placeDeleteHandler = (deltedePlaceId) => {
+    setData((prevItem) =>
+      prevItem.filter((place) => place.id !== deltedePlaceId)
+    );
   };
 
   return (
@@ -44,7 +50,7 @@ const UserPlace = () => {
           <img className="w-[150px]" src={loading} alt="loading" />
         </div>
       ) : (
-        <PlaceList items={data} userId={userId} />
+        <PlaceList items={data} userId={userId} onDelete={placeDeleteHandler} />
       )}
     </>
   );

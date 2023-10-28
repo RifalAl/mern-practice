@@ -8,7 +8,7 @@ const NavLinks = () => {
   const MENU = auth.isLoggedIn
     ? [
         { url: "/", title: "ALL USERS" },
-        { url: "/u1/places", title: "MY PLACES" },
+        { url: `/${auth.userId}/places`, title: "MY PLACES" },
         { url: "/places/new", title: "ADD PLACES" },
         { url: "/login", title: "LOGOUT", logout: true },
       ]

@@ -11,7 +11,8 @@ const InputField = ({
   touched,
   error,
   isTextArea,
-  type
+  type,
+  onChangePhoto
 }) => {
   return (
     <div>
@@ -43,7 +44,7 @@ const InputField = ({
             label={label}
             type={type}
             placeholder={variant === "static" ? placeholder : ""}
-            onChange={formik.handleChange}
+            onChange={onChangePhoto ? onChangePhoto : formik.handleChange}
             onBlur={formik.handleBlur}
             value={value || ""}
             error={touched && error ? true : false}

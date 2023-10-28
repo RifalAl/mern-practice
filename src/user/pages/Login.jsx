@@ -23,15 +23,19 @@ const Login = () => {
 
   const [isSignUp, setIsSignUp] = useState(false);
   const [openModal, setOpenModal] = useState(false);
+  const [photoFile, setPhotoFile] = useState("");
+  const [previewPhotoUrl, setPreviewPhotoUrl] = useState("");
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
-
+  
   const formikSignUp = useFormik({
     initialValues: {
+      photo: "",
       name: "",
       email: "",
       password: "",
     },
     validationSchema: Yup.object({
+      photo: Yup.mixed().required("Please upload an image"),
       name: Yup.string().required("name is required"),
       email: Yup.string()
         .required("email is required")
@@ -46,6 +50,7 @@ const Login = () => {
           "http://localhost:5000/api/users/signup",
           "POST",
           JSON.stringify({
+            photo: photoFile,
             name: formikSignUp.values.name,
             email: formikSignUp.values.email,
             password: formikSignUp.values.password,
@@ -56,6 +61,7 @@ const Login = () => {
         );
         auth.login(responseData.user.id);
         navigate.push("/");
+        console.log(responseData);
       } catch (err) {
         console.log(err);
         setOpenModal(true);
@@ -94,8 +100,26 @@ const Login = () => {
       }
     },
   });
+  const changePhotohandler = (e) => {
+    formikSignUp.handleChange(e);
+    setPhotoFile(e.target.files[0])
+    const fileReader = new FileReader();
+    fileReader.onload = () => {
+      setPreviewPhotoUrl(fileReader.result);
+    };
+    fileReader.readAsDataURL(e.target.files[0] || "");
+  };
 
   const formSignUpItems = [
+    {
+      name: "photo",
+      label: "Photo",
+      type: "file",
+      touched: formikSignUp.touched.photo,
+      error: formikSignUp.errors.photo,
+      value: formikSignUp.values.photo,
+      onChangePhoto: changePhotohandler,
+    },
     {
       name: "name",
       label: "Name",
@@ -143,6 +167,8 @@ const Login = () => {
 
   const isSignUpHandler = () => {
     setIsSignUp((prevItem) => !prevItem);
+    formikLogin.resetForm();
+    formikSignUp.resetForm();
   };
 
   const toogleModal = () => {
@@ -192,6 +218,15 @@ const Login = () => {
         ) : isSignUp ? (
           <form onSubmit={formikSignUp.handleSubmit}>
             <CardBody className="flex flex-col gap-4">
+              {formikSignUp.values.photo && (
+                <div className="flex justify-center">
+                  <img
+                    className="w-[150px] h-[150px] object-cover rounded-lg mb-5"
+                    src={previewPhotoUrl}
+                    alt=""
+                  />
+                </div>
+              )}
               {formSignUpItems.map((input) => (
                 <InputField
                   key={input.name}
@@ -203,6 +238,7 @@ const Login = () => {
                   touched={input.touched}
                   error={input.error}
                   value={input.value}
+                  onChangePhoto={input.onChangePhoto}
                 />
               ))}
             </CardBody>

@@ -22,7 +22,7 @@ const UpdatePlace = () => {
     const getPlace = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`
+          `${import.meta.env.VITE_BACKEND_URL}/places/${placeId}`
         );
         setIdentifiedPlace(responseData.place);
       } catch (error) {
@@ -45,12 +45,12 @@ const UpdatePlace = () => {
         .required("Please enter valid title"),
       description: Yup.string()
         .min(10, "Must be at least 10 character")
-        .required("Please enter valid address"),
+        .required("Please enter valid description"),
     }),
     onSubmit: async () => {
       try {
         await sendRequest(
-          `http://localhost:5000/api/places/${placeId}`,
+          `${import.meta.env.VITE_BACKEND_URL}/places/${placeId}`,
           "PATCH",
           JSON.stringify({
             title: formik.values.title,

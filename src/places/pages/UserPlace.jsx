@@ -16,7 +16,7 @@ const UserPlace = () => {
     const getPlaces = async () => {
       try {
         const responseData = await sendRequest(
-          `http://localhost:5000/api/places/user/${userId}`
+          `${import.meta.env.VITE_BACKEND_URL}/places/user/${userId}`
         );
         setData(responseData.userPlaces);
       } catch (error) {

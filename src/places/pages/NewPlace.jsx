@@ -39,7 +39,7 @@ const NewPlace = () => {
         .required("Please enter valid title"),
       description: Yup.string()
         .min(10, "Must be at least 10 character")
-        .required("Please enter valid address"),
+        .required("Please enter valid description"),
       address: Yup.string().required("Please enter an address"),
       latitude: Yup.string().required("Please enter an latitude"),
       longitude: Yup.string().required("Please enter an longitude"),
@@ -54,7 +54,7 @@ const NewPlace = () => {
         formData.append("longitude", formik.values.longitude);
         formData.append("image", photoFile);
         await sendRequest(
-          "http://localhost:5000/api/places",
+          `${import.meta.env.VITE_BACKEND_URL}/places`,
           "POST",
           formData,
           {

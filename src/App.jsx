@@ -1,3 +1,4 @@
+import React, { Suspense } from "react";
 import {
   BrowserRouter as Router,
   Route,
@@ -5,19 +6,24 @@ import {
   Switch,
 } from "react-router-dom";
 
-import { AuthContext } from "./shared/context/auth-context";
-
-import User from "./user/pages/User";
-import UserPlace from "./places/pages/UserPlace";
-import NewPlace from "./places/pages/NewPlace";
 import MainNavigation from "./shared/components/Navigation/MainNavigation";
-import UpdatePlace from "./places/pages/UpdatePlace";
-import Login from "./user/pages/Login";
+import { AuthContext } from "./shared/context/auth-context";
 import useAuth from "./shared/hooks/auth-hook";
+import loading from "./assets/loading.svg";
+
+const User = React.lazy(() => import("./user/pages/User"));
+const UserPlace = React.lazy(() => import("./places/pages/UserPlace"));
+const NewPlace = React.lazy(() => import("./places/pages/NewPlace"));
+const UpdatePlace = React.lazy(() => import("./places/pages/UpdatePlace"));
+const Login = React.lazy(() => import("./user/pages/Login"));
 
 const App = () => {
   const { token, loginHandler, logoutHandler, uId } = useAuth();
-
+  const loadingComponent = (
+    <div className="flex justify-center">
+      <img className="w-[150px]" src={loading} alt="loading" />
+    </div>
+  );
   let routes;
 
   if (token) {
@@ -70,7 +76,9 @@ const App = () => {
     >
       <Router>
         <MainNavigation />
-        <main className="mt-[5rem]">{routes}</main>
+        <main className="mt-[5rem]">
+          <Suspense fallback={loadingComponent}>{routes}</Suspense>
+        </main>
       </Router>
     </AuthContext.Provider>
   );

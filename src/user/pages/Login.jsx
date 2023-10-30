@@ -52,7 +52,7 @@ const Login = () => {
         formData.append("password", formikSignUp.values.password)
         formData.append("image", photoFile)
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/signup",
+          `${import.meta.env.VITE_BACKEND_URL}/users/signup`,
           "POST",
           formData
         );
@@ -80,7 +80,7 @@ const Login = () => {
     onSubmit: async () => {
       try {
         const responseData = await sendRequest(
-          "http://localhost:5000/api/users/login",
+          `${import.meta.env.VITE_BACKEND_URL}/users/login`,
           "POST",
           JSON.stringify({
             email: formikLogin.values.email,

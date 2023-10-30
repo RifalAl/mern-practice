@@ -38,7 +38,7 @@ const PlaceItem = ({
     setOpenAlert(false);
     try {
       await sendRequest(
-        `http://localhost:5000/api/places/${id}`,
+        `${import.meta.env.VITE_BACKEND_URL}/places/${id}`,
         "DELETE",
         null,
         {
@@ -82,7 +82,7 @@ const PlaceItem = ({
             <CardBody className="place-item__content p-0">
               <div className="place-item__image w-full h-full">
                 <img
-                  src={`http://localhost:5000/${image}`}
+                  src={`${import.meta.env.VITE_ASSETS_URL}/${image}`}
                   alt={title}
                   className="w-full h-full md:h-[20rem] object-cover rounded-tl-xl rounded-tr-xl"
                 />

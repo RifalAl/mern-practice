@@ -1,0 +1,1 @@
+var e=!0;function t(o,r){if(!e){if(o)return;var n="Warning: "+r;typeof console<"u"&&console.warn(n);try{throw Error(n)}catch{}}}const a=Object.freeze(Object.defineProperty({__proto__:null,default:t},Symbol.toStringTag,{value:"Module"}));export{a as t,t as w};

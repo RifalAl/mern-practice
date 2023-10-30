@@ -56,9 +56,9 @@ const Login = () => {
           "POST",
           formData
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
         navigate.push("/");
-        console.log(responseData);
+        // console.log(responseData);
       } catch (err) {
         console.log(err);
         setOpenModal(true);
@@ -90,7 +90,7 @@ const Login = () => {
             "Content-Type": "application/json",
           }
         );
-        auth.login(responseData.user.id);
+        auth.login(responseData.userId, responseData.token);
         navigate.push("/");
       } catch (err) {
         console.log(err);

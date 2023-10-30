@@ -31,9 +31,9 @@ const UserPlace = () => {
     setOpenModal((prevItem) => !prevItem);
   };
 
-  const placeDeleteHandler = (deltedePlaceId) => {
+  const placeDeleteHandler = (deletePlaceHandler) => {
     setData((prevItem) =>
-      prevItem.filter((place) => place.id !== deltedePlaceId)
+      prevItem.filter((place) => place.id !== deletePlaceHandler)
     );
   };
 

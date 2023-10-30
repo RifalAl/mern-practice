@@ -29,6 +29,8 @@ const NewPlace = () => {
       title: "",
       description: "",
       address: "",
+      latitude: "",
+      longitude: "",
     },
     validationSchema: Yup.object({
       photo: Yup.mixed().required("Please upload an image"),
@@ -38,26 +40,33 @@ const NewPlace = () => {
       description: Yup.string()
         .min(10, "Must be at least 10 character")
         .required("Please enter valid address"),
-      address: Yup.string().required("Please enter valid address"),
+      address: Yup.string().required("Please enter an address"),
+      latitude: Yup.string().required("Please enter an latitude"),
+      longitude: Yup.string().required("Please enter an longitude"),
     }),
     onSubmit: async () => {
       try {
-        const formData = new FormData()
-        formData.append("title", formik.values.title)
-        formData.append("description", formik.values.description)
-        formData.append("address", formik.values.address)
-        formData.append("creator", auth.userId)
-        formData.append("image", photoFile)
+        const formData = new FormData();
+        formData.append("title", formik.values.title);
+        formData.append("description", formik.values.description);
+        formData.append("address", formik.values.address);
+        formData.append("latitude", formik.values.latitude);
+        formData.append("longitude", formik.values.longitude);
+        formData.append("image", photoFile);
         await sendRequest(
           "http://localhost:5000/api/places",
           "POST",
-          formData
+          formData,
+          {
+            Authorization: "Bearer " + auth.token,
+          }
         );
         navigate.push("/");
       } catch (error) {
         console.log(error);
         setOpenModal(true);
       }
+      formik.values.photo = ""
     },
   });
 
@@ -105,6 +114,22 @@ const NewPlace = () => {
       touched: formik.touched.address,
       error: formik.errors.address,
       value: formik.values.address,
+    },
+    {
+      name: "latitude",
+      label: "Latitude",
+      type: "text",
+      touched: formik.touched.latitude,
+      error: formik.errors.latitude,
+      value: formik.values.latitude,
+    },
+    {
+      name: "longitude",
+      label: "Longitude",
+      type: "text",
+      touched: formik.touched.longitude,
+      error: formik.errors.longitude,
+      value: formik.values.longitude,
     },
   ];
 

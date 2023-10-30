@@ -11,7 +11,7 @@ import WarningModal from "../../shared/components/UI/WarningModal";
 import { AuthContext } from "../../shared/context/auth-context";
 
 const UpdatePlace = () => {
-  const auth = useContext(AuthContext)
+  const auth = useContext(AuthContext);
   const navigate = useHistory();
   const { isLoading, error, sendRequest, clearError } = useHttpClient();
   const placeId = useParams().placeId;
@@ -47,7 +47,7 @@ const UpdatePlace = () => {
         .min(10, "Must be at least 10 character")
         .required("Please enter valid address"),
     }),
-    onSubmit: async () =>  {
+    onSubmit: async () => {
       try {
         await sendRequest(
           `http://localhost:5000/api/places/${placeId}`,
@@ -58,6 +58,7 @@ const UpdatePlace = () => {
           }),
           {
             "Content-Type": "application/json",
+            Authorization: "Bearer " + auth.token,
           }
         );
         navigate.push(`/${auth.userId}/places`);
